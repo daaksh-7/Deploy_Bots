@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitaAI — Your Health Companion</title>
+<meta name="description" content="VitaAI — AI-powered healthcare platform with 24/7 chat support, mood tracking, counselling, and health vitals monitoring.">
+<meta property="og:title" content="VitaAI — Your Health Companion">
+<meta property="og:description" content="AI-Powered Healthcare Platform with chat support, mood checker, counselling and vitals monitoring.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --teal:#0f9b8e;--teal-light:#e0f7f5;--teal-dark:#0a6b61;
+  --coral:#ff6b6b;--coral-light:#fff0f0;
+  --mint:#43d9b5;--lavender:#8b9cf4;
+  --deep:#0d1b2a;--mid:#1e3a4f;
+  --text:#0d1b2a;--text2:#4a6278;
+  --card:#fff;--bg:#f4fbfa;--border:#d0ece9;
+  --shadow:0 4px 20px rgba(15,155,142,.10);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif}
+a{color:inherit;text-decoration:none}
+button{font-family:'DM Sans',sans-serif}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,251,250,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:8px;font-family:'Clash Display',sans-serif;font-size:1.3rem;font-weight:700;color:var(--teal);cursor:pointer}
+.logo-icon{width:34px;height:34px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pulse 2s infinite}
+.logo-icon svg{width:18px;height:18px;fill:white}
+.nav-tabs{display:flex;gap:2px}
+.nav-tabs button{background:none;border:none;padding:8px 13px;border-radius:8px;font-size:13.5px;color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-tabs button:hover{background:var(--teal-light);color:var(--teal)}
+.nav-tabs button.active{background:var(--teal);color:#fff}
+.nav-cta{background:var(--teal);color:#fff;border:none;padding:9px 20px;border-radius:20px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-cta:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{width:22px;height:2px;background:var(--teal);border-radius:2px;transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(244,251,250,.98);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:6px;z-index:99}
+.mobile-menu button{background:none;border:none;padding:12px 16px;border-radius:10px;font-size:15px;color:var(--text2);cursor:pointer;text-align:left;transition:all .2s}
+.mobile-menu button.active,.mobile-menu button:hover{background:var(--teal-light);color:var(--teal)}
+.mobile-menu.open{display:flex}
+
+/* PAGES */
+.page{display:none;padding-top:80px;min-height:100vh;animation:fadeIn .35s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{padding:3rem 2rem 2rem;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.1fr 0.9fr;gap:3rem;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:var(--teal-light);color:var(--teal);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:500;margin-bottom:1.25rem}
+.live-dot{width:7px;height:7px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite;display:inline-block}
+.hero h1{font-size:3.2rem;font-weight:700;line-height:1.08;margin-bottom:1.1rem;color:var(--deep)}
+.hero h1 span{color:var(--teal)}
+.hero p{color:var(--text2);font-size:1.05rem;line-height:1.75;margin-bottom:1.75rem}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{background:var(--teal);color:#fff;border:none;padding:13px 28px;border-radius:25px;font-size:15px;font-weight:500;cursor:pointer;transition:all .25s}
+.btn-primary:hover{background:var(--teal-dark);transform:translateY(-2px);box-shadow:0 8px 25px rgba(15,155,142,.3)}
+.btn-outline{background:transparent;color:var(--teal);border:2px solid var(--teal);padding:11px 26px;border-radius:25px;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-outline:hover{background:var(--teal-light)}
+
+/* HERO VISUAL */
+.hero-visual{position:relative;display:flex;justify-content:center;align-items:center;min-height:300px}
+.health-orb{width:260px;height:260px;border-radius:50%;background:linear-gradient(135deg,var(--teal) 0%,var(--mint) 100%);display:flex;align-items:center;justify-content:center;animation:float 4s ease-in-out infinite;position:relative;flex-shrink:0}
+.health-orb::before{content:'';position:absolute;inset:-18px;border-radius:50%;border:2px dashed rgba(15,155,142,.25);animation:spin 25s linear infinite}
+.health-orb svg{width:110px;height:110px;fill:rgba(255,255,255,.9)}
+.floating-card{position:absolute;background:white;border-radius:14px;padding:9px 13px;box-shadow:0 6px 24px rgba(0,0,0,.12);font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.fc1{top:10px;right:-10px;animation:floatCard 3s ease-in-out infinite;color:var(--teal)}
+.fc2{bottom:30px;left:-20px;animation:floatCard 3s ease-in-out infinite .8s;color:var(--coral)}
+.fc3{top:50%;right:-30px;transform:translateY(-50%);animation:floatCard 3s ease-in-out infinite 1.5s;color:var(--lavender)}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* STATS BAR */
+.stats-bar{background:var(--teal);color:white;padding:2rem;display:flex;justify-content:center;gap:4rem;flex-wrap:wrap}
+.stat{text-align:center}
+.stat .num{font-family:'Clash Display',sans-serif;font-size:2rem;font-weight:700}
+.stat .lbl{font-size:13px;opacity:.85;margin-top:2px}
+
+/* SECTION */
+.section{padding:3rem 2rem;max-width:1100px;margin:0 auto}
+.section-title{font-size:2rem;font-weight:700;color:var(--deep);margin-bottom:.4rem}
+.section-sub{color:var(--text2);margin-bottom:2rem;font-size:1.05rem}
+
+/* FEATURE GRID */
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.feat-card{background:white;border-radius:18px;padding:1.5rem;border:1px solid var(--border);cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--mint));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.feat-card:hover::before{transform:scaleX(1)}
+.feat-card:hover{transform:translateY(-5px);box-shadow:0 14px 40px rgba(15,155,142,.13);border-color:var(--teal)}
+.feat-icon{width:50px;height:50px;border-radius:13px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:23px}
+.feat-card h3{font-size:1rem;margin-bottom:.4rem;color:var(--deep)}
+.feat-card p{font-size:.875rem;color:var(--text2);line-height:1.65}
+
+/* AI CHAT */
+.chat-wrap{max-width:720px;margin:0 auto;padding:0 2rem 2rem}
+.chat-box{background:white;border-radius:20px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.chat-header{background:var(--teal);color:white;padding:1.1rem 1.5rem;display:flex;align-items:center;gap:12px}
+.ai-avatar{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.chat-info h3{font-size:1rem;margin:0}
+.status-dot{width:8px;height:8px;background:#4ade80;border-radius:50%;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+.chat-info p{font-size:12px;opacity:.85;margin-top:2px}
+.chat-msgs{padding:1.5rem;height:350px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.chat-msgs::-webkit-scrollbar{width:4px}
+.chat-msgs::-webkit-scrollbar-track{background:transparent}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.msg{max-width:78%;animation:msgPop .3s ease}
+@keyframes msgPop{from{opacity:0;transform:scale(.95) translateY(4px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.msg.bot{align-self:flex-start}
+.msg.user{align-self:flex-end}
+.msg-bubble{padding:11px 15px;border-radius:18px;font-size:14px;line-height:1.65}
+.msg.bot .msg-bubble{background:var(--teal-light);color:var(--deep);border-bottom-left-radius:4px}
+.msg.user .msg-bubble{background:var(--teal);color:white;border-bottom-right-radius:4px}
+.msg-time{font-size:11px;color:var(--text2);margin-top:4px}
+.msg.bot .msg-time{text-align:left}
+.msg.user .msg-time{text-align:right}
+.chat-footer{padding:1rem 1.25rem;border-top:1px solid var(--border)}
+.quick-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{background:var(--teal-light);color:var(--teal);border:1px solid rgba(15,155,142,.2);border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.chip:hover{background:var(--teal);color:white}
+.input-row{display:flex;gap:8px;align-items:center}
+.chat-input{flex:1;border:1px solid var(--border);border-radius:25px;padding:11px 18px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;color:var(--text);background:var(--bg);transition:border .2s}
+.chat-input:focus{border-color:var(--teal)}
+.send-btn{background:var(--teal);color:white;border:none;border-radius:50%;width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.send-btn:hover{background:var(--teal-dark);transform:scale(1.06)}
+.typing-indicator{display:flex;align-items:center;gap:5px;padding:11px 15px;background:var(--teal-light);border-radius:18px;border-bottom-left-radius:4px;width:fit-content}
+.typing-dot{width:7px;height:7px;background:var(--teal);border-radius:50%;animation:bounce .8s infinite}
+.typing-dot:nth-child(2){animation-delay:.15s}
+.typing-dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+
+/* MOOD */
+.mood-wrap{max-width:700px;margin:0 auto;padding:0 2rem 2rem}
+.mood-card{background:white;border-radius:20px;border:1px solid var(--border);padding:2rem;box-shadow:var(--shadow)}
+.mood-q{font-size:1.05rem;font-weight:500;margin-bottom:1.25rem;color:var(--deep)}
+.mood-emojis{display:flex;justify-content:space-around;margin-bottom:2rem;gap:8px}
+.mood-option{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.mood-btn{background:none;border:2px solid transparent;font-size:2rem;cursor:pointer;padding:10px;border-radius:14px;transition:all .22s;width:100%}
+.mood-btn:hover{background:var(--teal-light);transform:scale(1.15)}
+.mood-btn.selected{background:var(--teal-light);border-color:var(--teal);transform:scale(1.18);box-shadow:0 0 0 3px rgba(15,155,142,.15)}
+.mood-label{font-size:11px;color:var(--text2);text-align:center}
+.symptom-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.5rem}
+.sym-btn{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:13px;cursor:pointer;transition:all .2s;color:var(--text);display:flex;align-items:center;gap:5px}
+.sym-btn:hover,.sym-btn.active{background:var(--teal-light);border-color:var(--teal);color:var(--teal)}
+.wellness-bar{background:#e8f5f4;border-radius:10px;height:10px;overflow:hidden;margin:1rem 0}
+.wellness-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--mint));border-radius:10px;transition:width .8s ease;width:0}
+.mood-result{background:linear-gradient(135deg,var(--teal-light),#fff);border:1px solid rgba(15,155,142,.2);border-radius:16px;padding:1.5rem;margin-top:1.25rem;display:none;animation:fadeIn .4s ease}
+.mood-result h3{color:var(--teal);margin-bottom:.6rem;font-size:1.05rem}
+.mood-result p{font-size:.9rem;color:var(--text2);line-height:1.7}
+
+/* COUNSELLING */
+.counsel-wrap{max-width:960px;margin:0 auto;padding:0 2rem 2rem}
+.counsellors{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:1.5rem}
+.counsellor-card{background:white;border-radius:18px;border:1px solid var(--border);padding:1.5rem;text-align:center;cursor:pointer;transition:all .25s}
+.counsellor-card:hover{transform:translateY(-4px);box-shadow:0 14px 35px rgba(15,155,142,.12);border-color:var(--teal)}
+.counsellor-card.selected{border-color:var(--teal);box-shadow:0 0 0 3px rgba(15,155,142,.15)}
+.c-avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:1.5rem;font-weight:700;color:white}
+.counsellor-card h3{font-size:.95rem;margin-bottom:.25rem;color:var(--deep)}
+.c-spec{font-size:.8rem;color:var(--teal);margin-bottom:.4rem;font-weight:500}
+.c-rating{font-size:.8rem;color:var(--text2)}
+.avail-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;margin-top:.5rem;font-weight:500}
+.avail-now{background:#e8fef3;color:#16a34a}
+.avail-soon{background:#fff7ed;color:#d97706}
+.booking-card{background:white;border-radius:20px;border:1px solid var(--border);padding:1.75rem;box-shadow:var(--shadow)}
+.booking-card h3{font-size:1rem;margin-bottom:1.25rem;color:var(--deep)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:12.5px;color:var(--text2);margin-bottom:.4rem;font-weight:500;letter-spacing:.02em}
+.form-group input,.form-group select,.form-group textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal);background:white}
+.form-group textarea{resize:vertical;min-height:90px}
+.readonly-input{background:var(--teal-light)!important;color:var(--teal)!important;border-color:rgba(15,155,142,.3)!important}
+
+/* SUPPORT */
+.support-wrap{max-width:820px;margin:0 auto;padding:0 2rem 2rem}
+.ticket-form-card{background:white;border-radius:20px;border:1px solid var(--border);padding:1.75rem;margin-bottom:1.5rem;box-shadow:var(--shadow)}
+.priority-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+.pri-tab{border:1.5px solid var(--border);background:var(--bg);border-radius:8px;padding:7px 15px;font-size:13px;cursor:pointer;transition:all .2s;color:var(--text)}
+.pri-tab:hover,.pri-tab.active{border-color:var(--teal);background:var(--teal-light);color:var(--teal);font-weight:500}
+.tickets-list{display:flex;flex-direction:column;gap:10px}
+.tickets-title{font-size:1rem;color:var(--deep);margin-bottom:1rem;font-family:'Clash Display',sans-serif;font-weight:600}
+.ticket-item{background:white;border-radius:14px;border:1px solid var(--border);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;transition:all .2s;cursor:default}
+.ticket-item:hover{border-color:var(--teal);box-shadow:0 4px 18px rgba(15,155,142,.08)}
+.t-badge{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.t-info{flex:1}
+.t-title{font-size:.9rem;font-weight:500;margin-bottom:2px;color:var(--deep)}
+.t-meta{font-size:.8rem;color:var(--text2)}
+.t-status{font-size:.75rem;padding:4px 11px;border-radius:12px;font-weight:500;white-space:nowrap}
+.s-open{background:#fee2e2;color:#dc2626}
+.s-progress{background:#fef9c3;color:#ca8a04}
+.s-resolved{background:#dcfce7;color:#16a34a}
+
+/* VITALS */
+.vitals-wrap{max-width:960px;margin:0 auto;padding:0 2rem 2rem}
+.vitals-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:1.5rem}
+.vital-card{background:white;border-radius:16px;border:1px solid var(--border);padding:1.25rem;text-align:center;transition:all .25s;box-shadow:var(--shadow)}
+.vital-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.09)}
+.vital-icon{font-size:1.9rem;margin-bottom:.5rem}
+.vital-val{font-family:'Clash Display',sans-serif;font-size:1.9rem;font-weight:700;color:var(--deep);line-height:1}
+.vital-unit{font-size:11px;color:var(--text2);margin-top:2px}
+.vital-label{font-size:.8rem;color:var(--text2);margin-top:.35rem}
+.vital-trend{font-size:.75rem;margin-top:.35rem;display:flex;align-items:center;justify-content:center;gap:4px}
+.trend-up{color:#16a34a}
+.trend-ok{color:#d97706}
+.mini-chart{width:100%;height:6px;background:#eef;border-radius:3px;overflow:hidden;margin-top:.6rem}
+.mini-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--mint));border-radius:3px;animation:growBar .9s ease forwards;width:0}
+.chart-card{background:white;border-radius:18px;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.25rem}
+.chart-card h3{font-size:1rem;color:var(--deep);margin-bottom:1rem}
+.score-card{background:var(--teal);border-radius:18px;padding:1.75rem;color:white;display:flex;align-items:center;gap:2.5rem;flex-wrap:wrap}
+.score-num{font-family:'Clash Display',sans-serif;font-size:3.5rem;font-weight:700;line-height:1}
+.score-label{opacity:.85;font-size:.9rem;margin-top:4px}
+.score-bars{flex:1;min-width:180px}
+.sbar-row{display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;align-items:center}
+.sbar{background:rgba(255,255,255,.2);border-radius:4px;height:7px;margin-bottom:12px;overflow:hidden}
+.sbar-fill{background:rgba(255,255,255,.9);border-radius:4px;height:100%;animation:growBar 1s ease forwards;width:0}
+
+/* FOOTER */
+footer{background:var(--deep);color:rgba(255,255,255,.7);text-align:center;padding:1.5rem;font-size:13px;margin-top:2rem}
+footer span{color:var(--mint)}
+
+/* ANIMATIONS */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes fc3float{0%,100%{transform:translateY(-50%)}50%{transform:translateY(calc(-50% - 7px))}}
+.fc3{animation:fc3float 3s ease-in-out infinite 1.5s!important}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(15,155,142,.4)}50%{box-shadow:0 0 0 8px rgba(15,155,142,0)}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}}
+@keyframes growBar{from{width:0}}
+@keyframes ecgDraw{0%{stroke-dashoffset:500}50%{stroke-dashoffset:0}100%{stroke-dashoffset:-500}}
+
+/* ECG */
+.ecg-svg{opacity:.35}
+.ecg-path{stroke-dasharray:500;stroke-dashoffset:500;animation:ecgDraw 2.5s ease-in-out infinite}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--teal);color:white;padding:14px 22px;border-radius:14px;font-size:14px;font-weight:500;z-index:9999;transform:translateY(80px);opacity:0;transition:all .35s;box-shadow:0 8px 30px rgba(15,155,142,.35)}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;text-align:center;gap:2rem}
+  .hero-visual{display:flex;justify-content:center}
+  .hero h1{font-size:2.4rem}
+  .hero-btns{justify-content:center}
+  .feature-grid{grid-template-columns:repeat(2,1fr)}
+  .counsellors{grid-template-columns:repeat(2,1fr)}
+  .vitals-grid{grid-template-columns:repeat(2,1fr)}
+  .form-grid{grid-template-columns:1fr}
+  .nav-tabs{display:none}
+  .hamburger{display:flex}
+  .stats-bar{gap:2rem}
+  .score-card{gap:1.5rem}
+  .fc1,.fc2,.fc3{display:none}
+}
+@media(max-width:560px){
+  .feature-grid,.counsellors{grid-template-columns:1fr}
+  .vitals-grid{grid-template-columns:1fr 1fr}
+  .symptom-grid{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:2rem}
+  nav{padding:0 1rem}
+  .section{padding:2rem 1rem}
+  .chat-wrap,.mood-wrap,.counsel-wrap,.support-wrap,.vitals-wrap{padding:0 1rem 2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </div>
+    VitaAI
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-btn active" onclick="showPage('home')">Home</button>
+    <button class="nav-btn" onclick="showPage('chat')">AI Chat</button>
+    <button class="nav-btn" onclick="showPage('mood')">Mood</button>
+    <button class="nav-btn" onclick="showPage('counselling')">Counselling</button>
+    <button class="nav-btn" onclick="showPage('support')">Support</button>
+    <button class="nav-btn" onclick="showPage('vitals')">Vitals</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="nav-cta" onclick="showPage('chat')">Get Started</button>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="nav-btn active" onclick="showPage('home');closeMenu()">🏠 Home</button>
+  <button class="nav-btn" onclick="showPage('chat');closeMenu()">🤖 AI Chat</button>
+  <button class="nav-btn" onclick="showPage('mood');closeMenu()">🌡️ Mood</button>
+  <button class="nav-btn" onclick="showPage('counselling');closeMenu()">💬 Counselling</button>
+  <button class="nav-btn" onclick="showPage('support');closeMenu()">🎯 Support</button>
+  <button class="nav-btn" onclick="showPage('vitals');closeMenu()">📊 Vitals</button>
+</div>
+
+<!-- ═══════════ HOME ═══════════ -->
+<div id="home" class="page active">
+  <div class="hero">
+    <div>
+      <div class="hero-badge">
+        <span class="live-dot"></span> AI-Powered Healthcare Platform
+      </div>
+      <h1>Your Personal <span>Health AI</span> Companion</h1>
+      <p>24/7 intelligent health support powered by advanced AI. Chat, track your mood, consult specialists, and monitor your vitals — all in one place, designed for you.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('chat')">Start AI Chat →</button>
+        <button class="btn-outline" onclick="showPage('mood')">Check Mood</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="health-orb">
+        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </div>
+      <div class="floating-card fc1"><span class="dot" style="background:#4ade80"></span> Heart Rate: 72 bpm</div>
+      <div class="floating-card fc2"><span class="dot" style="background:var(--coral)"></span> Mood: Feeling Good 😊</div>
+      <div class="floating-card fc3"><span class="dot" style="background:var(--lavender)"></span> Sleep: 7.5 hrs</div>
+    </div>
+  </div>
+
+  <div style="max-width:1100px;margin:0 auto;padding:0 2rem;overflow:hidden">
+    <svg class="ecg-svg" width="100%" height="42" viewBox="0 0 900 42" preserveAspectRatio="none">
+      <polyline class="ecg-path" points="0,21 90,21 135,5 155,38 175,5 195,21 285,21 330,5 350,38 370,5 390,21 480,21 525,5 545,38 565,5 585,21 675,21 720,5 740,38 760,5 780,21 900,21" fill="none" stroke="#0f9b8e" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="num">50K+</div><div class="lbl">Active Users</div></div>
+    <div class="stat"><div class="num">98%</div><div class="lbl">Satisfaction</div></div>
+    <div class="stat"><div class="num">24/7</div><div class="lbl">AI Support</div></div>
+    <div class="stat"><div class="num">200+</div><div class="lbl">Health Experts</div></div>
+    <div class="stat"><div class="num">15+</div><div class="lbl">AI Models</div></div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Everything you need for better health</h2>
+    <p class="section-sub">Comprehensive AI-powered tools built for modern healthcare</p>
+    <div class="feature-grid">
+      <div class="feat-card" onclick="showPage('chat')">
+        <div class="feat-icon">🤖</div>
+        <h3>AI Health Chat</h3>
+        <p>Get instant answers to health questions from our intelligent AI assistant, available around the clock with expert-level guidance.</p>
+      </div>
+      <div class="feat-card" onclick="showPage('mood')">
+        <div class="feat-icon">🌡️</div>
+        <h3>Mood Tracker</h3>
+        <p>Monitor your emotional wellbeing daily. Smart mood analysis gives you personalized insights and early warning signs.</p>
+      </div>
+      <div class="feat-card" onclick="showPage('counselling')">
+        <div class="feat-icon">💬</div>
+        <h3>Online Counselling</h3>
+        <p>Book sessions with licensed therapists and health counsellors for professional, compassionate guidance.</p>
+      </div>
+      <div class="feat-card" onclick="showPage('support')">
+        <div class="feat-icon">🎯</div>
+        <h3>Support System</h3>
+        <p>Submit health queries, track their resolution status, and receive expert responses from our dedicated care team.</p>
+      </div>
+      <div class="feat-card" onclick="showPage('vitals')">
+        <div class="feat-icon">📊</div>
+        <h3>Vitals Monitor</h3>
+        <p>Track heart rate, blood oxygen, sleep quality, and other health metrics with beautiful real-time dashboards.</p>
+      </div>
+      <div class="feat-card" onclick="showPage('chat')">
+        <div class="feat-icon">💊</div>
+        <h3>Med Reminders</h3>
+        <p>Never miss a dose — smart scheduling, custom reminders, and AI-powered interaction checks keep you safe.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonials -->
+  <div style="background:white;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:3rem 2rem">
+    <div style="max-width:1100px;margin:0 auto">
+      <h2 class="section-title" style="text-align:center;margin-bottom:.4rem">Loved by thousands</h2>
+      <p class="section-sub" style="text-align:center;margin-bottom:2rem">Real people, real results</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem">
+        <div style="background:var(--bg);border-radius:16px;padding:1.5rem;border:1px solid var(--border)">
+          <div style="font-size:1.2rem;color:var(--teal);margin-bottom:.75rem">★★★★★</div>
+          <p style="font-size:.9rem;color:var(--text2);line-height:1.7;margin-bottom:1rem">"VitaAI's mood tracker helped me identify stress patterns I wasn't aware of. The counselling booking was seamless and the therapist was excellent."</p>
+          <div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px">P</div><div><div style="font-size:.85rem;font-weight:500">Priya M.</div><div style="font-size:.75rem;color:var(--text2)">Bangalore</div></div></div>
+        </div>
+        <div style="background:var(--bg);border-radius:16px;padding:1.5rem;border:1px solid var(--border)">
+          <div style="font-size:1.2rem;color:var(--teal);margin-bottom:.75rem">★★★★★</div>
+          <p style="font-size:.9rem;color:var(--text2);line-height:1.7;margin-bottom:1rem">"The AI chat is remarkably knowledgeable. Got clear guidance on my medication at 2am when I couldn't reach my doctor. Absolutely essential app."</p>
+          <div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:var(--lavender);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px">R</div><div><div style="font-size:.85rem;font-weight:500">Rahul K.</div><div style="font-size:.75rem;color:var(--text2)">Mumbai</div></div></div>
+        </div>
+        <div style="background:var(--bg);border-radius:16px;padding:1.5rem;border:1px solid var(--border)">
+          <div style="font-size:1.2rem;color:var(--teal);margin-bottom:.75rem">★★★★★</div>
+          <p style="font-size:.9rem;color:var(--text2);line-height:1.7;margin-bottom:1rem">"Tracking my vitals has never been this easy or motivating. The health score gave me a clear goal to work towards. Love this platform!"</p>
+          <div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:var(--coral);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:14px">A</div><div><div style="font-size:.85rem;font-weight:500">Anjali S.</div><div style="font-size:.75rem;color:var(--text2)">Chennai</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ AI CHAT ═══════════ -->
+<div id="chat" class="page">
+  <div class="section" style="padding-bottom:1rem">
+    <h2 class="section-title">AI Health Assistant</h2>
+    <p class="section-sub">Ask me anything — symptoms, medications, wellness tips, mental health support and more</p>
+  </div>
+  <div class="chat-wrap">
+    <div class="chat-box">
+      <div class="chat-header">
+        <div class="ai-avatar">🤖</div>
+        <div class="chat-info">
+          <h3>VitaAI Assistant</h3>
+          <p><span class="status-dot"></span>Online — Ready to help you</p>
+        </div>
+        <div style="font-size:12px;opacity:.8;margin-left:auto">🔒 Private &amp; Secure</div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs">
+        <div class="msg bot">
+          <div class="msg-bubble">👋 Hello! I'm VitaAI, your personal health assistant. I can help with symptoms, wellness tips, medication questions, and connect you with the right care. How are you feeling today?</div>
+          <div class="msg-time">Just now</div>
+        </div>
+      </div>
+      <div class="chat-footer">
+        <div class="quick-chips">
+          <span class="chip" onclick="sendChip('I have a headache, what should I do?')">🤕 Headache</span>
+          <span class="chip" onclick="sendChip('How can I improve my sleep quality?')">😴 Better sleep</span>
+          <span class="chip" onclick="sendChip('What vitamins should I take daily?')">💊 Daily vitamins</span>
+          <span class="chip" onclick="sendChip('I feel anxious lately, any tips?')">😰 Anxiety help</span>
+          <span class="chip" onclick="sendChip('Signs of dehydration?')">💧 Dehydration</span>
+        </div>
+        <div class="input-row">
+          <input id="chatInput" class="chat-input" placeholder="Type your health question…" onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="send-btn" onclick="sendMsg()">
+            <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MOOD ═══════════ -->
+<div id="mood" class="page">
+  <div class="section" style="padding-bottom:1rem">
+    <h2 class="section-title">Mood &amp; Wellness Check</h2>
+    <p class="section-sub">Track how you're feeling and get personalised wellness insights</p>
+  </div>
+  <div class="mood-wrap">
+    <div class="mood-card">
+      <p class="mood-q">1. How would you describe your mood right now?</p>
+      <div class="mood-emojis">
+        <div class="mood-option"><button class="mood-btn" data-mood="1" onclick="selectMood(this)">😣</button><div class="mood-label">Terrible</div></div>
+        <div class="mood-option"><button class="mood-btn" data-mood="2" onclick="selectMood(this)">😞</button><div class="mood-label">Bad</div></div>
+        <div class="mood-option"><button class="mood-btn" data-mood="3" onclick="selectMood(this)">😐</button><div class="mood-label">Okay</div></div>
+        <div class="mood-option"><button class="mood-btn" data-mood="4" onclick="selectMood(this)">🙂</button><div class="mood-label">Good</div></div>
+        <div class="mood-option"><button class="mood-btn" data-mood="5" onclick="selectMood(this)">😄</button><div class="mood-label">Great</div></div>
+      </div>
+
+      <p class="mood-q">2. Any symptoms today? <span style="font-weight:400;color:var(--text2);font-size:.9rem">(select all that apply)</span></p>
+      <div class="symptom-grid">
+        <button class="sym-btn" onclick="toggleSym(this)">😴 Fatigue</button>
+        <button class="sym-btn" onclick="toggleSym(this)">🤕 Headache</button>
+        <button class="sym-btn" onclick="toggleSym(this)">😰 Anxiety</button>
+        <button class="sym-btn" onclick="toggleSym(this)">😔 Low mood</button>
+        <button class="sym-btn" onclick="toggleSym(this)">🛌 Poor sleep</button>
+        <button class="sym-btn" onclick="toggleSym(this)">🤢 Nausea</button>
+        <button class="sym-btn" onclick="toggleSym(this)">💪 Energetic</button>
+        <button class="sym-btn" onclick="toggleSym(this)">😌 Relaxed</button>
+        <button class="sym-btn" onclick="toggleSym(this)">🧠 Focused</button>
+      </div>
+
+      <p class="mood-q">3. Estimated wellness level</p>
+      <div class="wellness-bar"><div class="wellness-fill" id="wellnessBar"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:1.5rem"><span>Needs care</span><span id="wellnessScore" style="color:var(--teal);font-weight:500">Select your mood above</span><span>Excellent</span></div>
+
+      <button class="btn-primary" onclick="submitMood()">Get My Wellness Insights ✨</button>
+      <div class="mood-result" id="moodResult">
+        <h3 id="moodResultTitle"></h3>
+        <p id="moodResultText"></p>
+        <div style="margin-top:1rem;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="chip" onclick="showPage('chat')">Chat with AI →</button>
+          <button class="chip" onclick="showPage('counselling')">Book Counsellor →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ COUNSELLING ═══════════ -->
+<div id="counselling" class="page">
+  <div class="section" style="padding-bottom:1rem">
+    <h2 class="section-title">Book a Counselling Session</h2>
+    <p class="section-sub">Connect with licensed health professionals and therapists</p>
+  </div>
+  <div class="counsel-wrap">
+    <div class="counsellors">
+      <div class="counsellor-card" onclick="selectCounsellor(this,'Dr. Priya Sharma','Mental Health · CBT Specialist')">
+        <div class="c-avatar" style="background:linear-gradient(135deg,var(--teal),var(--mint))">PS</div>
+        <h3>Dr. Priya Sharma</h3>
+        <div class="c-spec">Mental Health · CBT</div>
+        <div class="c-rating">⭐ 4.9 · 340 sessions</div>
+        <span class="avail-badge avail-now">● Available Now</span>
+      </div>
+      <div class="counsellor-card" onclick="selectCounsellor(this,'Dr. Rajesh Kumar','General Health &amp; Nutrition')">
+        <div class="c-avatar" style="background:linear-gradient(135deg,#8b9cf4,#c4b5fd)">RK</div>
+        <h3>Dr. Rajesh Kumar</h3>
+        <div class="c-spec">General Health · Nutrition</div>
+        <div class="c-rating">⭐ 4.8 · 210 sessions</div>
+        <span class="avail-badge avail-now">● Available Now</span>
+      </div>
+      <div class="counsellor-card" onclick="selectCounsellor(this,'Dr. Anjali Nair','Anxiety &amp; Stress Management')">
+        <div class="c-avatar" style="background:linear-gradient(135deg,#f97316,#fb923c)">AN</div>
+        <h3>Dr. Anjali Nair</h3>
+        <div class="c-spec">Anxiety · Stress</div>
+        <div class="c-rating">⭐ 5.0 · 180 sessions</div>
+        <span class="avail-badge avail-soon">● Available 4 PM</span>
+      </div>
+    </div>
+    <div class="booking-card">
+      <h3>Book Your Session</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="counselName" placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label>Session Type</label>
+          <select>
+            <option>Video Call</option>
+            <option>Voice Call</option>
+            <option>Chat Session</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Preferred Date &amp; Time</label>
+          <input type="datetime-local">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Selected Counsellor</label>
+        <input type="text" id="selectedCounsellor" placeholder="Click a counsellor card above to select" readonly class="readonly-input">
+      </div>
+      <div class="form-group">
+        <label>What would you like to discuss?</label>
+        <textarea placeholder="Briefly describe what brings you here today — this helps your counsellor prepare for your session."></textarea>
+      </div>
+      <button class="btn-primary" onclick="bookSession()">Confirm Booking 📅</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SUPPORT ═══════════ -->
+<div id="support" class="page">
+  <div class="section" style="padding-bottom:1rem">
+    <h2 class="section-title">Health Support System</h2>
+    <p class="section-sub">Submit queries, track progress, get expert responses from our care team</p>
+  </div>
+  <div class="support-wrap">
+    <div class="ticket-form-card">
+      <h3 style="font-size:1rem;color:var(--deep);margin-bottom:1rem">Submit a New Request</h3>
+      <label style="font-size:12.5px;color:var(--text2);font-weight:500;display:block;margin-bottom:.5rem">Priority Level</label>
+      <div class="priority-tabs">
+        <button class="pri-tab active" onclick="setPriority(this)">🟢 Low</button>
+        <button class="pri-tab" onclick="setPriority(this)">🟡 Medium</button>
+        <button class="pri-tab" onclick="setPriority(this)">🔴 High</button>
+        <button class="pri-tab" onclick="setPriority(this)">⚡ Urgent</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div class="form-group" style="margin:0">
+          <label>Category</label>
+          <select>
+            <option>General Health Query</option>
+            <option>Medication Question</option>
+            <option>Mental Health Support</option>
+            <option>Emergency Guidance</option>
+            <option>Lab Results Help</option>
+            <option>Diet &amp; Nutrition</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Your Name</label>
+          <input type="text" placeholder="Your full name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" placeholder="Brief description of your health concern">
+      </div>
+      <div class="form-group">
+        <label>Describe Your Concern</label>
+        <textarea style="min-height:90px" placeholder="Provide as much detail as possible — duration, severity, any medications you're on…"></textarea>
+      </div>
+      <button class="btn-primary" onclick="submitTicket()">Submit Request 🎯</button>
+    </div>
+
+    <div class="tickets-title">Your Recent Tickets</div>
+    <div class="tickets-list" id="ticketsList">
+      <div class="ticket-item">
+        <span class="t-badge" style="background:#4ade80"></span>
+        <div class="t-info">
+          <div class="t-title">High blood pressure readings — need advice</div>
+          <div class="t-meta">2 hours ago · General Health</div>
+        </div>
+        <span class="t-status s-progress">In Progress</span>
+      </div>
+      <div class="ticket-item">
+        <span class="t-badge" style="background:#facc15"></span>
+        <div class="t-info">
+          <div class="t-title">Medication interaction: metformin + vitamins</div>
+          <div class="t-meta">Yesterday · Medication Question</div>
+        </div>
+        <span class="t-status s-resolved">Resolved ✓</span>
+      </div>
+      <div class="ticket-item">
+        <span class="t-badge" style="background:#f87171"></span>
+        <div class="t-info">
+          <div class="t-title">Recurring migraine patterns — need specialist referral</div>
+          <div class="t-meta">3 days ago · General Health</div>
+        </div>
+        <span class="t-status s-open">Open</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ VITALS ═══════════ -->
+<div id="vitals" class="page">
+  <div class="section" style="padding-bottom:1rem">
+    <h2 class="section-title">Your Health Vitals</h2>
+    <p class="section-sub">Real-time health monitoring and trend analysis</p>
+  </div>
+  <div class="vitals-wrap">
+    <div class="vitals-grid">
+      <div class="vital-card">
+        <div class="vital-icon" style="animation:heartbeat 1.2s ease-in-out infinite">❤️</div>
+        <div class="vital-val">72</div>
+        <div class="vital-unit">bpm</div>
+        <div class="vital-label">Heart Rate</div>
+        <div class="vital-trend trend-up">▲ Normal range</div>
+        <div class="mini-chart"><div class="mini-fill" style="--w:72%;width:var(--w)"></div></div>
+      </div>
+      <div class="vital-card">
+        <div class="vital-icon">💧</div>
+        <div class="vital-val">98</div>
+        <div class="vital-unit">%</div>
+        <div class="vital-label">Blood Oxygen</div>
+        <div class="vital-trend trend-up">▲ Excellent</div>
+        <div class="mini-chart"><div class="mini-fill" style="--w:98%;width:var(--w)"></div></div>
+      </div>
+      <div class="vital-card">
+        <div class="vital-icon">🌡️</div>
+        <div class="vital-val">36.8</div>
+        <div class="vital-unit">°C</div>
+        <div class="vital-label">Body Temp</div>
+        <div class="vital-trend trend-up">▲ Normal</div>
+        <div class="mini-chart"><div class="mini-fill" style="--w:60%;width:var(--w)"></div></div>
+      </div>
+      <div class="vital-card">
+        <div class="vital-icon">😴</div>
+        <div class="vital-val">7.5</div>
+        <div class="vital-unit">hrs</div>
+        <div class="vital-label">Sleep Quality</div>
+        <div class="vital-trend trend-up">▲ Good</div>
+        <div class="mini-chart"><div class="mini-fill" style="--w:75%;width:var(--w)"></div></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Weekly Heart Rate Trend</h3>
+      <svg width="100%" height="120" viewBox="0 0 600 120" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="hrGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0f9b8e" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="#0f9b8e" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,80 C40,75 80,65 120,70 S200,58 240,53 S320,43 360,48 S440,38 480,43 S560,52 600,48 L600,110 L0,110 Z" fill="url(#hrGrad)"/>
+        <path d="M0,80 C40,75 80,65 120,70 S200,58 240,53 S320,43 360,48 S440,38 480,43 S560,52 600,48" fill="none" stroke="#0f9b8e" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="0" cy="80" r="5" fill="#0f9b8e"/><circle cx="120" cy="70" r="5" fill="#0f9b8e"/>
+        <circle cx="240" cy="53" r="5" fill="#0f9b8e"/><circle cx="360" cy="48" r="5" fill="#0f9b8e"/>
+        <circle cx="480" cy="43" r="5" fill="#0f9b8e"/><circle cx="600" cy="48" r="5" fill="#0f9b8e"/>
+        <text x="0" y="115" font-size="11" fill="#4a6278" font-family="sans-serif">Mon</text>
+        <text x="100" y="115" font-size="11" fill="#4a6278" font-family="sans-serif">Tue</text>
+        <text x="215" y="115" font-size="11" fill="#4a6278" font-family="sans-serif">Wed</text>
+        <text x="335" y="115" font-size="11" fill="#4a6278" font-family="sans-serif">Thu</text>
+        <text x="455" y="115" font-size="11" fill="#4a6278" font-family="sans-serif">Fri</text>
+        <text x="565" y="115" font-size="11" fill="#4a6278" font-family="sans-serif">Sat</text>
+      </svg>
+    </div>
+
+    <div class="score-card">
+      <div>
+        <div class="score-num">87</div>
+        <div class="score-label">Overall Health Score</div>
+        <div style="margin-top:.75rem;font-size:12px;opacity:.75">Updated today at 9:00 AM</div>
+      </div>
+      <div class="score-bars">
+        <div class="sbar-row"><span>Cardiovascular</span><span>92%</span></div>
+        <div class="sbar"><div class="sbar-fill" style="width:92%"></div></div>
+        <div class="sbar-row"><span>Mental Wellness</span><span>78%</span></div>
+        <div class="sbar"><div class="sbar-fill" style="width:78%"></div></div>
+        <div class="sbar-row"><span>Sleep Quality</span><span>85%</span></div>
+        <div class="sbar"><div class="sbar-fill" style="width:85%"></div></div>
+        <div class="sbar-row"><span>Activity Level</span><span>70%</span></div>
+        <div class="sbar"><div class="sbar-fill" style="width:70%"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>Made with <span>♥</span> by VitaAI · AI-Powered Health Platform · <span>vitaai.health</span></p>
+  <p style="margin-top:.4rem;font-size:11px;opacity:.6">For informational purposes only. Always consult a qualified healthcare professional for medical advice.</p>
+</footer>
+
+<script>
+// ── NAV ──
+const PAGES = ['home','chat','mood','counselling','support','vitals'];
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = PAGES.indexOf(id);
+  document.querySelectorAll('.nav-btn')[idx]?.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleMenu(){
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+// ── TOAST ──
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+// ── AI CHAT ──
+const aiDB = {
+  headache:["A headache can stem from dehydration, tension, or lack of sleep — all very common. Try: drinking 2 glasses of water, resting in a quiet dark room, and a cool cloth on your forehead. Over-the-counter paracetamol or ibuprofen can help. If headaches are frequent or very severe, please see a doctor. 💊","Tension headaches are the most common type. Gentle neck stretches, a warm shower, and avoiding bright screens for an hour often brings relief. Stay well hydrated throughout the day."],
+  sleep:["Good sleep hygiene starts with consistency. Aim for 7–9 hours, avoid screens 1 hour before bed, keep your room cool (18–20°C), and try deep breathing before sleep. A regular routine trains your body clock. 🛌","Poor sleep can affect immunity, mood, and heart health. Tips: consistent wake time, limit caffeine after 2 PM, keep your room dark and quiet, and try magnesium-rich foods like nuts and leafy greens."],
+  vitamin:["Key daily vitamins include: Vitamin D (critical in India for immunity — most people are deficient), Vitamin B12 (essential for vegetarians), Vitamin C for immunity, Iron from leafy greens, and Omega-3 for heart health. Always check with your doctor before starting supplements. 💊","A rainbow diet — colourful fruits, vegetables, whole grains, legumes, nuts — covers most needs. Vitamin D from 15 mins of morning sun, B12 from dairy/eggs, and folate from leafy greens are especially important."],
+  anxiety:["Anxiety is very common and manageable. Try the 4-7-8 breathing: inhale for 4 counts, hold for 7, exhale for 8. Also try grounding: name 5 things you see, 4 you can touch, 3 you can hear. 🧘 Our counselling team can also help.","Managing anxiety: regular exercise (even 20 min walks), limiting caffeine, mindfulness apps, journaling your thoughts, and talking to a therapist. Don't hesitate to book a counselling session — it really helps."],
+  dehydration:["Signs of dehydration: dark yellow urine, dry mouth, fatigue, dizziness, and headaches. Aim for 8–10 glasses of water daily. In Indian heat, add coconut water or ORS for electrolytes. Eat water-rich foods: cucumber, watermelon, orange. 💧","In India's climate, dehydration is very common. Check urine colour — pale yellow is ideal. Carry a water bottle, set hourly reminders, and avoid excess tea and coffee which act as diuretics."],
+  fever:["A mild fever (up to 38.5°C) is often the body fighting infection. Rest, stay hydrated, and take paracetamol for comfort. If fever exceeds 39°C, lasts more than 3 days, or comes with severe symptoms, see a doctor urgently. 🌡️","Monitor your temperature every few hours. Cool compresses on the forehead can help. Avoid cold baths — they can cause shivering which raises temperature. Warm fluids and rest are your best friends."],
+  default:["That's an important health question! Based on general medical knowledge, I'd recommend: staying hydrated, getting adequate rest, and consulting a healthcare professional for personalised advice. I can also connect you with our counselling team. 🩺","Thank you for sharing. While I can offer general guidance, every person's health is unique. For a proper evaluation, please see a doctor. Would you like me to help you find the right specialist or book a counselling session?"]
+};
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function getReply(msg){
+  const m = msg.toLowerCase();
+  if(/headache|migraine|head pain/.test(m)) return pick(aiDB.headache);
+  if(/sleep|insomnia|tired|fatigue/.test(m)) return pick(aiDB.sleep);
+  if(/vitamin|supplement|nutrition|diet/.test(m)) return pick(aiDB.vitamin);
+  if(/anxi|stress|worry|panic|mental/.test(m)) return pick(aiDB.anxiety);
+  if(/dehydrat|water|thirst/.test(m)) return pick(aiDB.dehydration);
+  if(/fever|temperature|hot/.test(m)) return pick(aiDB.fever);
+  return pick(aiDB.default);
+}
+function sendChip(t){document.getElementById('chatInput').value=t;sendMsg()}
+function sendMsg(){
+  const inp = document.getElementById('chatInput');
+  const txt = inp.value.trim();
+  if(!txt) return;
+  const box = document.getElementById('chatMsgs');
+  const now = ()=>new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  box.innerHTML += `<div class="msg user"><div class="msg-bubble">${txt}</div><div class="msg-time">${now()}</div></div>`;
+  inp.value = '';
+  box.scrollTop = box.scrollHeight;
+  const typing = document.createElement('div');
+  typing.className = 'msg bot';
+  typing.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+  box.appendChild(typing);
+  box.scrollTop = box.scrollHeight;
+  setTimeout(()=>{
+    box.removeChild(typing);
+    box.innerHTML += `<div class="msg bot"><div class="msg-bubble">${getReply(txt)}</div><div class="msg-time">${now()}</div></div>`;
+    box.scrollTop = box.scrollHeight;
+  }, 1200 + Math.random()*700);
+}
+
+// ── MOOD ──
+let selectedMood = 0;
+function selectMood(btn){
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedMood = parseInt(btn.dataset.mood);
+  document.getElementById('wellnessBar').style.width = (selectedMood/5*100)+'%';
+  const lbls = ['','Needs immediate care 🔴','Below average 🟠','Moderate wellness 🟡','Good wellness 🟢','Excellent wellness ✅'];
+  document.getElementById('wellnessScore').textContent = lbls[selectedMood];
+}
+function toggleSym(btn){btn.classList.toggle('active')}
+function submitMood(){
+  if(!selectedMood){showToast('Please select your mood first!');return}
+  const msgs = {
+    1:"Your mood signals that you may need extra care today. Please rest, drink water, and reach out to someone you trust. Our counsellors are here for you — you're not alone. 💙",
+    2:"You're having a tough day — and that's okay. Try a gentle walk, soothing music, or journaling. Our AI chat and counselling team are ready to support you. 🌿",
+    3:"You're managing steadily. Small positive actions — a nutritious meal, 20 mins of movement, or 5 mins of meditation — can shift your energy noticeably today. 🌱",
+    4:"You're doing well! Keep up those healthy habits. Stay hydrated, move your body, take moments of gratitude. Check your vitals to see how your body reflects this. ✨",
+    5:"Outstanding! Your body and mind seem beautifully aligned. Use this energy to set a new health goal or support someone else in their journey. Keep shining! 🌟"
+  };
+  const titles = {1:'Needs Extra Support 💙',2:'Taking It Easy 🌿',3:'Steady & Stable 🌱',4:'Feeling Good ✨',5:'Absolutely Thriving! 🌟'};
+  const el = document.getElementById('moodResult');
+  document.getElementById('moodResultTitle').textContent = titles[selectedMood];
+  document.getElementById('moodResultText').textContent = msgs[selectedMood];
+  el.style.display = 'block';
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── COUNSELLING ──
+function selectCounsellor(card, name){
+  document.querySelectorAll('.counsellor-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('selectedCounsellor').value = name;
+}
+function bookSession(){
+  const sel = document.getElementById('selectedCounsellor').value;
+  if(!sel){showToast('Please select a counsellor first!');return}
+  const name = document.getElementById('counselName').value || 'Guest';
+  showToast(`✅ Booking confirmed for ${name} with ${sel.split(',')[0]}!`);
+}
+
+// ── SUPPORT ──
+function setPriority(btn){
+  document.querySelectorAll('.pri-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+}
+function submitTicket(){
+  const list = document.getElementById('ticketsList');
+  const now = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const el = document.createElement('div');
+  el.className = 'ticket-item';
+  el.style.animation = 'fadeIn .3s ease';
+  el.innerHTML = `<span class="t-badge" style="background:var(--coral)"></span><div class="t-info"><div class="t-title">New health query — submitted at ${now}</div><div class="t-meta">Just now · Awaiting review</div></div><span class="t-status s-open">Open</span>`;
+  list.prepend(el);
+  showToast('✅ Request submitted! Our team will respond within 24 hours.');
+}
+</script>
+</body>
+</html>
